@@ -19,6 +19,7 @@ public class Tweet implements Parcelable {
     public long uid;
     public String createdAt;
     public User user;
+    public Entity entity;
 
     public static Tweet fromJSON(JSONObject jsonObject) {
         Tweet tweet = new Tweet();
@@ -26,7 +27,8 @@ public class Tweet implements Parcelable {
         tweet.body = jsonObject.getString("text");
         tweet.uid = jsonObject.getLong("id");
         tweet.createdAt = jsonObject.getString("created_at");
-        tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));}
+        tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+        tweet.entity = Entity.fromJON(jsonObject.getJSONObject("entities"));}
         catch (JSONException e){
             e.printStackTrace();
         }
@@ -47,6 +49,9 @@ public class Tweet implements Parcelable {
     }
 
 
+    public Tweet() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -58,9 +63,7 @@ public class Tweet implements Parcelable {
         dest.writeLong(this.uid);
         dest.writeString(this.createdAt);
         dest.writeParcelable(this.user, flags);
-    }
-
-    public Tweet() {
+        dest.writeParcelable(this.entity, flags);
     }
 
     protected Tweet(Parcel in) {
@@ -68,9 +71,10 @@ public class Tweet implements Parcelable {
         this.uid = in.readLong();
         this.createdAt = in.readString();
         this.user = in.readParcelable(User.class.getClassLoader());
+        this.entity = in.readParcelable(Entity.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {
+    public static final Creator<Tweet> CREATOR = new Creator<Tweet>() {
         @Override
         public Tweet createFromParcel(Parcel source) {
             return new Tweet(source);
