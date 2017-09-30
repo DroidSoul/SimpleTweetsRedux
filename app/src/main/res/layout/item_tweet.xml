@@ -29,8 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/tvUserName"
         android:layout_below="@+id/tvUserName"
-        android:maxLines="2"
-        android:ellipsize="end"
+        android:autoLink="all"
+        android:linksClickable="true"
         android:text="TextView" />
 
     <TextView
