@@ -66,53 +66,10 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
         rvTweets.setAdapter(tweetAdapter);
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         if (!isNetworkAvailable()) {
-            Toast.makeText(this, "No Internet. Using offline tweets.", Toast.LENGTH_LONG).show();
-            swipeContainer.setEnabled(false);
-            List<Tweet> queryResults = SQLite.select().from(Tweet.class).orderBy(Tweet_Table.uid, false).queryList();
-            tweets.clear();
-            tweets.addAll(queryResults);
-            tweetAdapter.notifyDataSetChanged();
+            readFromDB();
         }
         else {
-            client = TwitterApp.getRestClient();
-            getUser();
-//        rvTweets.clearOnScrollListeners();
-            populateTimeline(-1);
-//            swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-            // Setup refresh listener which triggers new data loading
-            swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    // Your code to refresh the list here.
-                    // Make sure you call swipeContainer.setRefreshing(false)
-                    // once the network request has completed successfully.
-                    populateTimeline(-1);
-                }
-            });
-            swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                    android.R.color.holo_green_light,
-                    android.R.color.holo_orange_light,
-                    android.R.color.holo_red_light);
-
-            //       populateTimeline(-1);
-
-
-            scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-                @Override
-                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                    loadNextDataFromApi(page);
-                }
-            };
-            rvTweets.addOnScrollListener(scrollListener);
-            ItemClickSupport.addTo(rvTweets).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                @Override
-                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                    Tweet tweet = tweets.get(position);
-                    Intent i = new Intent(TimelineActivity.this, TweetDetailActivity.class);
-                    i.putExtra("details", Parcels.wrap(tweet));
-                    startActivity(i);
-                }
-            });
+            getDataFromApi();
         }
     }
 /*    public void clear() {
@@ -126,6 +83,52 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
         tweetAdapter.notifyDataSetChanged();
     }
  */
+    public void readFromDB() {
+        Toast.makeText(this, "No Internet. Using offline tweets.", Toast.LENGTH_LONG).show();
+        swipeContainer.setEnabled(false);
+        List<Tweet> queryResults = SQLite.select().from(Tweet.class).orderBy(Tweet_Table.uid, false).queryList();
+        tweets.clear();
+        tweets.addAll(queryResults);
+        tweetAdapter.notifyDataSetChanged();
+    }
+
+    public void getDataFromApi() {
+        client = TwitterApp.getRestClient();
+        getUser();
+        populateTimeline(-1);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                populateTimeline(-1);
+            }
+        });
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextDataFromApi(page);
+            }
+        };
+        rvTweets.addOnScrollListener(scrollListener);
+        ItemClickSupport.addTo(rvTweets).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Tweet tweet = tweets.get(position);
+                Intent i = new Intent(TimelineActivity.this, TweetDetailActivity.class);
+                i.putExtra("details", Parcels.wrap(tweet));
+                startActivity(i);
+            }
+        });
+    }
+
     private void populateTimeline(final long maxID) {
 
         client.getHomeTimeline(maxID, new JsonHttpResponseHandler() {

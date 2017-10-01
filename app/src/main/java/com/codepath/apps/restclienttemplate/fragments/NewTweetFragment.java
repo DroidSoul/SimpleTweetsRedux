@@ -44,7 +44,7 @@ public class NewTweetFragment extends DialogFragment {
     final static int CharLength = 140;
 
     private TwitterClient twitterClient;
-    private User user;
+    User authUser;
 
     ImageButton ibCancel;
     ImageView ivProfileImage;
@@ -55,7 +55,7 @@ public class NewTweetFragment extends DialogFragment {
     TextView tvCharsLeft;
 
     public NewTweetFragment() {
-        twitterClient = TwitterApp.getRestClient();
+//        twitterClient = TwitterApp.getRestClient();
     }
     public static NewTweetFragment newInstance(User user) {
         NewTweetFragment frag = new NewTweetFragment();
@@ -64,7 +64,6 @@ public class NewTweetFragment extends DialogFragment {
         frag.setArguments(args);
         return frag;
     }
-
 
     public interface onFragmentResult {
         void returnData(Tweet tweet);
@@ -80,7 +79,9 @@ public class NewTweetFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        user = Parcels.unwrap(getArguments().getParcelable("user"));
+        authUser = Parcels.unwrap(getArguments().getParcelable("user"));
+        twitterClient = TwitterApp.getRestClient();
+//        getUser();
         initiateView(view);
 
         etTweetBody.addTextChangedListener(new TextWatcher() {
@@ -146,10 +147,28 @@ public class NewTweetFragment extends DialogFragment {
         tvScreenName = (TextView) view.findViewById(R.id.tvScreenName);
         btnTweet = (Button) view.findViewById(R.id.btnTweet);
         tvCharsLeft = (TextView) view.findViewById(R.id.tvCharsLeft);
-        tvUserName.setText(user.name);
-        tvScreenName.setText(user.screenName);
-        Glide.with(getActivity()).load(user.profileImageUrl)
+        tvUserName.setText(authUser.name);
+        tvScreenName.setText(authUser.screenName);
+        Glide.with(getActivity()).load(authUser.profileImageUrl)
                 .fitCenter().centerCrop()
                 .into(ivProfileImage);
+    }
+    public void getUser() {
+        twitterClient.getAuthUser(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                Log("debug")
+                authUser = new User();
+                try {
+                    authUser = User.fromJSON(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                Log.d("DEBUG", response.toString());
+            }
+        });
     }
 }

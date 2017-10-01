@@ -11,7 +11,8 @@
         android:id="@+id/ibCancel"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@drawable/ic_launcher" />
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/cancel128" />
 
     <ImageView
         android:id="@+id/ivProfileImage"

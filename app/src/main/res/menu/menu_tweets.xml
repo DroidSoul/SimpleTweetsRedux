@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/miCompose"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/compose2"
         app:showAsAction="ifRoom"
         android:title="Compose">
     </item>
