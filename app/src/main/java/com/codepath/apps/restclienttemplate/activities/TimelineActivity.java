@@ -1,10 +1,9 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.utils.TwitterApp;
+import com.codepath.apps.restclienttemplate.utils.TwitterClient;
 import com.codepath.apps.restclienttemplate.adapters.TweetAdapter;
 import com.codepath.apps.restclienttemplate.fragments.NewTweetFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -26,7 +28,6 @@ import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListe
 import com.codepath.apps.restclienttemplate.utils.ItemClickSupport;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,8 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
-
-import static android.R.attr.max;
 
 public class TimelineActivity extends AppCompatActivity implements NewTweetFragment.onFragmentResult{
 
@@ -72,17 +71,7 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
             getDataFromApi();
         }
     }
-/*    public void clear() {
-        tweets.clear();
-        tweetAdapter.notifyDataSetChanged();
-    }
 
-    // Add a list of items -- change to type used
-    public void addAll(List<Tweet> list) {
-        tweets.addAll(list);
-        tweetAdapter.notifyDataSetChanged();
-    }
- */
     public void readFromDB() {
         Toast.makeText(this, "No Internet. Using offline tweets.", Toast.LENGTH_LONG).show();
         swipeContainer.setEnabled(false);
@@ -170,7 +159,6 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_tweets, menu);
         return true;
-
     }
 
     @Override
@@ -189,6 +177,7 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
         }
         return super.onOptionsItemSelected(item);
     }
+
     public void getUser() {
         client.getAuthUser(new JsonHttpResponseHandler() {
             @Override
@@ -214,6 +203,7 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
         //scroll to top after tweet post
         rvTweets.scrollToPosition(0);
     }
+
     public boolean isOnline() {
         Runtime runtime = Runtime.getRuntime();
         try {

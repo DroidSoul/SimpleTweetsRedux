@@ -1,8 +1,8 @@
 package com.codepath.apps.restclienttemplate.fragments;
 
-import android.preference.PreferenceActivity;
+import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -20,8 +20,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
-import com.codepath.apps.restclienttemplate.TwitterApp;
-import com.codepath.apps.restclienttemplate.TwitterClient;
+import com.codepath.apps.restclienttemplate.utils.TwitterApp;
+import com.codepath.apps.restclienttemplate.utils.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -31,8 +31,6 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import cz.msebera.android.httpclient.Header;
-
-import static com.codepath.apps.restclienttemplate.models.Tweet.fromJSON;
 
 /**
  * Created by bear&bear on 9/27/2017.
@@ -55,8 +53,9 @@ public class NewTweetFragment extends DialogFragment {
     TextView tvCharsLeft;
 
     public NewTweetFragment() {
-//        twitterClient = TwitterApp.getRestClient();
+        twitterClient = TwitterApp.getRestClient();
     }
+
     public static NewTweetFragment newInstance(User user) {
         NewTweetFragment frag = new NewTweetFragment();
         Bundle args = new Bundle();
@@ -67,6 +66,16 @@ public class NewTweetFragment extends DialogFragment {
 
     public interface onFragmentResult {
         void returnData(Tweet tweet);
+    }
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity activity = getActivity();
+        try {
+            activityCommander = (onFragmentResult) activity;
+        } catch(ClassCastException e) {
+            throw new ClassCastException(activity.toString());
+        }
     }
 
     @Nullable
@@ -80,7 +89,7 @@ public class NewTweetFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         authUser = Parcels.unwrap(getArguments().getParcelable("user"));
-        twitterClient = TwitterApp.getRestClient();
+//        twitterClient = TwitterApp.getRestClient();
 //        getUser();
         initiateView(view);
 
@@ -95,7 +104,7 @@ public class NewTweetFragment extends DialogFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 int remainingChars = CharLength - s.length();
-                tvCharsLeft.setText(Integer.toString(remainingChars));
+                tvCharsLeft.setText(String.valueOf(remainingChars));
                 if (remainingChars < 0) {
                     tvCharsLeft.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
                     btnTweet.setEnabled(false);
@@ -116,7 +125,7 @@ public class NewTweetFragment extends DialogFragment {
 
                         Tweet newTweet = Tweet.fromJSON(response);
 
-                        activityCommander = (onFragmentResult) getActivity();
+//                        activityCommander = (onFragmentResult) getActivity();
                         activityCommander.returnData(newTweet);
                     }
 
@@ -153,7 +162,7 @@ public class NewTweetFragment extends DialogFragment {
                 .fitCenter().centerCrop()
                 .into(ivProfileImage);
     }
-    public void getUser() {
+/*    public void getUser() {
         twitterClient.getAuthUser(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -170,5 +179,5 @@ public class NewTweetFragment extends DialogFragment {
                 Log.d("DEBUG", response.toString());
             }
         });
-    }
+    }*/
 }

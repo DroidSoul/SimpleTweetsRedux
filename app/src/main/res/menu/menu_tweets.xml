@@ -1,9 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
     <item
         android:id="@+id/miCompose"
-        android:icon="@drawable/compose2"
+        android:icon="@drawable/compose3"
         app:showAsAction="ifRoom"
-        android:title="Compose">
+        android:title="@string/compose">
     </item>
 </menu>

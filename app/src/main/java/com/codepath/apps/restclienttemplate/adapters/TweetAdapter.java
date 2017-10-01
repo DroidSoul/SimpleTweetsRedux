@@ -35,16 +35,16 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView ivProfileImage;
-        public TextView tvUserName;
-        public TextView tvScreenName;
-        public TextView tvRelativeTime;
-        public TextView tvBody;
-        public ImageView ivImageMedia;
+        ImageView ivProfileImage;
+        TextView tvUserName;
+        TextView tvScreenName;
+        TextView tvRelativeTime;
+        TextView tvBody;
+        ImageView ivImageMedia;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             ivProfileImage = (ImageView) itemView.findViewById(R.id.ivProfileImage);
             tvUserName = (TextView) itemView.findViewById(R.id.tvUserName);
@@ -73,7 +73,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         holder.tvRelativeTime.setText(getRelativeTimeAgo(tweet.createdAt));
         holder.tvScreenName.setText(tweet.user.screenName);
         Glide.with(mContext).load(tweet.user.profileImageUrl).into(holder.ivProfileImage);
-        if (tweet.entity.mediaUrl != null) {
+        if (tweet.entity != null && tweet.entity.mediaUrl != null) {
             Glide.with(mContext).load(tweet.entity.mediaUrl).fitCenter().into(holder.ivImageMedia);}
         else {
             holder.ivImageMedia.setImageResource(0);
