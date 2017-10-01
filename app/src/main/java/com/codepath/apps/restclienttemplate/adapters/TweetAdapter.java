@@ -18,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import static com.codepath.apps.restclienttemplate.R.id.ivImageMedia;
+
 /**
  * Created by bear&bear on 9/25/2017.
  */
@@ -40,6 +42,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public TextView tvScreenName;
         public TextView tvRelativeTime;
         public TextView tvBody;
+        public ImageView ivImageMedia;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -48,6 +51,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             tvScreenName = (TextView) itemView.findViewById(R.id.tvScreenName);
             tvRelativeTime = (TextView) itemView.findViewById(R.id.tvRelativeTime);
+            ivImageMedia = itemView.findViewById(R.id.ivImageMedia);
         }
 
     }
@@ -69,6 +73,11 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         holder.tvRelativeTime.setText(getRelativeTimeAgo(tweet.createdAt));
         holder.tvScreenName.setText(tweet.user.screenName);
         Glide.with(mContext).load(tweet.user.profileImageUrl).into(holder.ivProfileImage);
+        if (tweet.entity.mediaUrl != null) {
+            Glide.with(mContext).load(tweet.entity.mediaUrl).fitCenter().into(holder.ivImageMedia);}
+        else {
+            holder.ivImageMedia.setImageResource(0);
+        }
     }
 
     @Override

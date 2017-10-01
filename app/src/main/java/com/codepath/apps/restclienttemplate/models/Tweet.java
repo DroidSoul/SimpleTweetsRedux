@@ -3,6 +3,13 @@ package com.codepath.apps.restclienttemplate.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.codepath.apps.restclienttemplate.MyDatabase;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,27 +19,62 @@ import java.util.ArrayList;
 /**
  * Created by bear&bear on 9/24/2017.
  */
+@Table(database = MyDatabase.class)
+//@Parcel(analyze={Tweet.class})
+public class Tweet extends BaseModel implements Parcelable {
 
-public class Tweet implements Parcelable {
 
+    @Column
     public String body;
+
+    @Column
+    @PrimaryKey
     public long uid;
+
+    @Column
     public String createdAt;
+
+    @Column
+    @ForeignKey(saveForeignKeyModel = false)
     public User user;
+
+    @Column
+    @ForeignKey(saveForeignKeyModel = false)
     public Entity entity;
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
 
     public static Tweet fromJSON(JSONObject jsonObject) {
         Tweet tweet = new Tweet();
         try {
-        tweet.body = jsonObject.getString("text");
-        tweet.uid = jsonObject.getLong("id");
-        tweet.createdAt = jsonObject.getString("created_at");
-        tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
-        tweet.entity = Entity.fromJON(jsonObject.getJSONObject("entities"));}
+        tweet.setBody(jsonObject.getString("text"));
+        tweet.setUid(jsonObject.getLong("id"));
+        tweet.setCreatedAt(jsonObject.getString("created_at"));
+        tweet.setUser(User.fromJSON(jsonObject.getJSONObject("user")));
+        tweet.setEntity(Entity.fromJON(jsonObject.getJSONObject("entities")));
+            tweet.save();
+        }
         catch (JSONException e){
             e.printStackTrace();
         }
-
         return tweet;
     }
 
