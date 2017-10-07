@@ -16,6 +16,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static java.lang.Integer.parseInt;
+
 /**
  * Created by bear&bear on 9/24/2017.
  */
@@ -45,6 +47,19 @@ public class Tweet extends BaseModel implements Parcelable {
     @ForeignKey(saveForeignKeyModel = false)
     public Entity entity;
 
+//    @Column
+    public boolean isRetweet;
+
+//    @Column
+    public boolean isLike;
+
+//    @Column
+    public int retweetCount;
+
+//    @Column
+    public int likeCount;
+
+
     public void setBody(String body) {
         this.body = body;
     }
@@ -65,6 +80,22 @@ public class Tweet extends BaseModel implements Parcelable {
         this.entity = entity;
     }
 
+    public void setIsRetweet(boolean isRetweet) {
+        this.isRetweet = isRetweet;
+    }
+
+    public void setIsLike(boolean isLike) {
+        this.isLike = isLike;
+    }
+
+    public void setRetweetCount(int retweetCount) {
+        this.retweetCount = retweetCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
     public static Tweet fromJSON(JSONObject jsonObject) {
         Tweet tweet = new Tweet();
         try {
@@ -73,6 +104,18 @@ public class Tweet extends BaseModel implements Parcelable {
         tweet.setCreatedAt(jsonObject.getString("created_at"));
         tweet.setUser(User.fromJSON(jsonObject.getJSONObject("user")));
         tweet.setEntity(Entity.fromJON(jsonObject.getJSONObject("entities")));
+            tweet.setIsLike(jsonObject.getBoolean("favorited"));
+            tweet.setIsRetweet(jsonObject.getBoolean("retweeted"));
+            if(jsonObject.has("retweet_count")) {
+                tweet.setRetweetCount(Integer.parseInt(jsonObject.getString("retweet_count")));
+            }
+            if(jsonObject.has("favorite_count")) {
+                tweet.setLikeCount(Integer.parseInt(jsonObject.getString("favorite_count")));
+            }
+            if(tweet.body.startsWith("RT")) {
+                tweet.setIsLike(false);
+                tweet.setLikeCount(0);
+            }
             tweet.save();
         }
         catch (JSONException e){
@@ -109,6 +152,10 @@ public class Tweet extends BaseModel implements Parcelable {
         dest.writeString(this.createdAt);
         dest.writeParcelable(this.user, flags);
         dest.writeParcelable(this.entity, flags);
+        dest.writeByte(this.isRetweet ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isLike ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.retweetCount);
+        dest.writeInt(this.likeCount);
     }
 
     protected Tweet(Parcel in) {
@@ -117,6 +164,10 @@ public class Tweet extends BaseModel implements Parcelable {
         this.createdAt = in.readString();
         this.user = in.readParcelable(User.class.getClassLoader());
         this.entity = in.readParcelable(Entity.class.getClassLoader());
+        this.isRetweet = in.readByte() != 0;
+        this.isLike = in.readByte() != 0;
+        this.retweetCount = in.readInt();
+        this.likeCount = in.readInt();
     }
 
     public static final Creator<Tweet> CREATOR = new Creator<Tweet>() {
