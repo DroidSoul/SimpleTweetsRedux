@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -11,7 +12,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.activities.ProfileActivity;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+
+import org.parceler.Parcels;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.codepath.apps.restclienttemplate.R.id.ivImageMedia;
+import static com.codepath.apps.restclienttemplate.R.id.ivProfileImage;
 
 /**
  * Created by bear&bear on 9/25/2017.
@@ -67,7 +72,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Tweet tweet = mTweets.get(position);
+        final Tweet tweet = mTweets.get(position);
         holder.tvUserName.setText(tweet.user.name);
         holder.tvBody.setText(tweet.body);
         holder.tvRelativeTime.setText(getRelativeTimeAgo(tweet.createdAt));
@@ -78,6 +83,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         else {
             holder.ivImageMedia.setImageResource(0);
         }
+        holder.ivProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                intent.putExtra("user", Parcels.wrap(tweet.getUser()));
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

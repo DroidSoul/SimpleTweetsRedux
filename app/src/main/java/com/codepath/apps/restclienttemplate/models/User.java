@@ -35,6 +35,10 @@ public class User extends BaseModel implements Parcelable {
     @Column
     public String profileImageUrl;
 
+    public String tagline;
+    public int followersCount;
+    public int followingCount;
+
     public void setName(String name) {
         this.name = name;
     }
@@ -61,8 +65,15 @@ public class User extends BaseModel implements Parcelable {
         user.setScreenName("@" + jsonObject.getString("screen_name"));
  //       user.profileImageUrl = jsonObject.getString("profile_image_url");
         user.setProfileImageUrl(jsonObject.getString("profile_image_url"));
+
+        user.tagline = jsonObject.getString("description");
+        user.followersCount = jsonObject.getInt("followers_count");
+        user.followingCount = jsonObject.getInt("friends_count");
         user.save();
         return user;
+    }
+
+    public User() {
     }
 
     @Override
@@ -76,9 +87,9 @@ public class User extends BaseModel implements Parcelable {
         dest.writeLong(this.uid);
         dest.writeString(this.screenName);
         dest.writeString(this.profileImageUrl);
-    }
-
-    public User() {
+        dest.writeString(this.tagline);
+        dest.writeInt(this.followersCount);
+        dest.writeInt(this.followingCount);
     }
 
     protected User(Parcel in) {
@@ -86,9 +97,12 @@ public class User extends BaseModel implements Parcelable {
         this.uid = in.readLong();
         this.screenName = in.readString();
         this.profileImageUrl = in.readString();
+        this.tagline = in.readString();
+        this.followersCount = in.readInt();
+        this.followingCount = in.readInt();
     }
 
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+    public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel source) {
             return new User(source);

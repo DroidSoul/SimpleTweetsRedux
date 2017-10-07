@@ -7,4 +7,20 @@
         app:showAsAction="ifRoom"
         android:title="@string/compose">
     </item>
+
+    <item
+        android:id="@+id/miPorfile"
+        android:icon="@drawable/ic_person_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/profile">
+    </item>
+
+    <item
+        android:id="@+id/miActionProgress"
+        android:title="Loading..."
+        android:visible="false"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        app:actionLayout="@layout/action_view_progress" />
+
 </menu>

@@ -23,6 +23,9 @@ import java.util.ArrayList;
 //@Parcel(analyze={Tweet.class})
 public class Tweet extends BaseModel implements Parcelable {
 
+    public User getUser() {
+        return user;
+    }
 
     @Column
     public String body;

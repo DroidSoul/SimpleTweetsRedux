@@ -11,5 +11,6 @@
     <string name="tweet">tweet</string>
     <string name="_140">140</string>
     <string name="compose">Compose</string>
+    <string name="profile">profile</string>
 
 </resources>
