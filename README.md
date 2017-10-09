@@ -22,13 +22,13 @@ The following **required** functionality is completed:
 The following **optional** features are implemented:
 
 * [ ] User can view following / followers list through the profile
-* [ ] Implements robust error handling, [check if internet is available](http://guides.codepath.com/android/Sending-and-Managing-Network-Requests#checking-for-network-connectivity), handle error cases, network failures
+* [X] Implements robust error handling, [check if internet is available](http://guides.codepath.com/android/Sending-and-Managing-Network-Requests#checking-for-network-connectivity), handle error cases, network failures
 * [ ] When a network request is sent, user sees an [indeterminate progress indicator](http://guides.codepath.com/android/Handling-ProgressBars#progress-within-actionbar)
-* [ ] User can **"reply" to any tweet on their home timeline**
-  * [ ] The user that wrote the original tweet is automatically "@" replied in compose
-* [ ] User can click on a tweet to be **taken to a "detail view"** of that tweet
- * [ ] User can take favorite (and unfavorite) or retweet actions on a tweet
-* [ ] User can **search for tweets matching a particular query** and see results
+* [X] User can **"reply" to any tweet on their home timeline**
+  * [X] The user that wrote the original tweet is automatically "@" replied in compose
+* [X] User can click on a tweet to be **taken to a "detail view"** of that tweet
+ * [X] User can take favorite (and unfavorite) or retweet actions on a tweet
+* [X] User can **search for tweets matching a particular query** and see results
 * [ ] Usernames and hashtags are styled and clickable within tweets [using clickable spans](http://guides.codepath.com/android/Working-with-the-TextView#creating-clickable-styled-spans)
 
 The following **bonus** features are implemented:
@@ -42,11 +42,12 @@ The following **additional** features are implemented:
 
 * [ ] List anything else that you can get done to improve the app functionality!
 
+
 ## Video Walkthrough
 
-Here's a walkthrough of implemented user stories:
+Here's a walkthrough of implemented user stories(https://i.imgur.com/1hEMCb2.gif):
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://i.imgur.com/1hEMCb2.gif' title='Video Walkthrough' width='384' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -54,9 +55,13 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 Describe any challenges encountered while building the app.
 
+Communications between fragment-activity-fragment-fragment.
+
 ## Open-source libraries used
 
 - [Android Async HTTP](https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
+- [Glide] (https://github.com/bumptech/glide) - Image loading and caching library for Android
+- [Glide Transformation] (https://github.com/wasabeef/glide-transformations)
 - [Picasso](http://square.github.io/picasso/) - Image loading and caching library for Android
 
 ## License

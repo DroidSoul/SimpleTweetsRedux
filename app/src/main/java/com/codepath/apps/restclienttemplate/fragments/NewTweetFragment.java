@@ -89,8 +89,7 @@ public class NewTweetFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         authUser = Parcels.unwrap(getArguments().getParcelable("user"));
-//        twitterClient = TwitterApp.getRestClient();
-//        getUser();
+
         initiateView(view);
 
         etTweetBody.addTextChangedListener(new TextWatcher() {
@@ -125,7 +124,6 @@ public class NewTweetFragment extends DialogFragment {
 
                         Tweet newTweet = Tweet.fromJSON(response);
 
-//                        activityCommander = (onFragmentResult) getActivity();
                         activityCommander.returnData(newTweet);
                     }
 
@@ -159,25 +157,6 @@ public class NewTweetFragment extends DialogFragment {
         tvUserName.setText(authUser.name);
         tvScreenName.setText(authUser.screenName);
         Glide.with(getActivity()).load(authUser.profileImageUrl)
-                .fitCenter().centerCrop()
                 .into(ivProfileImage);
     }
-/*    public void getUser() {
-        twitterClient.getAuthUser(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                Log("debug")
-                authUser = new User();
-                try {
-                    authUser = User.fromJSON(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                Log.d("DEBUG", response.toString());
-            }
-        });
-    }*/
 }

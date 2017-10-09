@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.activities.ProfileActivity;
+import com.codepath.apps.restclienttemplate.fragments.ReplyTweetFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.utils.TwitterApp;
 import com.codepath.apps.restclienttemplate.utils.TwitterClient;
@@ -29,7 +31,11 @@ import java.util.List;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+import static android.R.attr.bitmap;
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
+import static com.codepath.apps.restclienttemplate.R.id.ivReply;
 import static com.codepath.apps.restclienttemplate.R.id.tvLikeCount;
 
 
@@ -42,11 +48,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     private List<Tweet> mTweets;
     private Context mContext;
     TwitterClient client;
+    FragmentManager mFragmentManager;
 
-    public TweetAdapter(Context context, List<Tweet> tweets) {
+    public TweetAdapter(Context context, List<Tweet> tweets, FragmentManager fragmentManager) {
         this.mTweets = tweets;
         mContext = context;
         client = TwitterApp.getRestClient();
+        this.mFragmentManager = fragmentManager;
     }
 
 
@@ -99,21 +107,30 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         holder.tvBody.setText(tweet.body);
         holder.tvRelativeTime.setText(getRelativeTimeAgo(tweet.createdAt));
         holder.tvScreenName.setText(tweet.user.screenName);
-        Glide.with(mContext).load(tweet.user.profileImageUrl).into(holder.ivProfileImage);
+        Glide.with(mContext).load(tweet.user.profileImageUrl).apply(bitmapTransform(new RoundedCornersTransformation(30, 0, RoundedCornersTransformation.CornerType.ALL))).into(holder.ivProfileImage);
         if (tweet.entity != null && tweet.entity.mediaUrl != null) {
-            Glide.with(mContext).load(tweet.entity.mediaUrl).fitCenter().into(holder.ivImageMedia);}
+            Glide.with(mContext).load(tweet.entity.mediaUrl).into(holder.ivImageMedia);
+//            Glide.with(mContext).load(tweet.entity.mediaUrl).apply(bitmapTransform(new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL))).into(holder.ivImageMedia);
+        }
         else {
             holder.ivImageMedia.setImageResource(0);
         }
+
+        holder.tvLikeCount.setText("");
+        holder.tvRetweetCount.setText("");
+
         if (tweet.retweetCount > 0) {
             holder.tvRetweetCount.setText(String.valueOf(tweet.retweetCount));
         }
-
 
         if (tweet.likeCount > 0) {
             holder.tvLikeCount.setText(String.valueOf(tweet.likeCount));
 
         }
+
+        holder.ivIsLike.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite_gray_24dp));
+        holder.ivIsRetweet.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_gray_24dp));
+
         if(tweet.isLike){
             holder.ivIsLike.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
         }
@@ -141,6 +158,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             public void onClick(View v) {
                 reTweet(tweet, holder.tvRetweetCount, holder.ivIsRetweet);
 
+            }
+        });
+        holder.ivReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReplyTweetFragment myDialog = ReplyTweetFragment.newInstance(tweet);
+                myDialog.show(mFragmentManager, "reply tweet");
             }
         });
     }
@@ -202,14 +226,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 }
 
             }
-
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.d("DEBUG", responseString);
 
             }
         }, tweet.isRetweet, tweet.uid);}
-
 
     @Override
     public int getItemCount() {

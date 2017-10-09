@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import com.codepath.apps.restclienttemplate.adapters.SmartFragmentStatePagerAdap
 import com.codepath.apps.restclienttemplate.adapters.TweetsPagerAdapter;
 import com.codepath.apps.restclienttemplate.fragments.HomeTimeLineFragment;
 import com.codepath.apps.restclienttemplate.fragments.MentionsTimeLineFragment;
+import com.codepath.apps.restclienttemplate.fragments.ReplyTweetFragment;
 import com.codepath.apps.restclienttemplate.fragments.TweetsListFragment;
 import com.codepath.apps.restclienttemplate.utils.TwitterApp;
 import com.codepath.apps.restclienttemplate.utils.TwitterClient;
@@ -55,7 +57,7 @@ import static com.codepath.apps.restclienttemplate.R.id.rvTweets;
 import static com.codepath.apps.restclienttemplate.R.id.swipeContainer;
 import static com.codepath.apps.restclienttemplate.R.string.tweet;
 
-public class TimelineActivity extends AppCompatActivity implements NewTweetFragment.onFragmentResult{
+public class TimelineActivity extends AppCompatActivity implements NewTweetFragment.onFragmentResult, ReplyTweetFragment.onFragmentResult{
 
     private TwitterClient client;
     User authUser;
@@ -74,19 +76,7 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
         vpPager.setAdapter(tweetsPagerAdapter);
         TabLayout tabLayout = findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(vpPager);
- /*       tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                vpPager.setCurrentItem(position);
-            }
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });*/
+
         client = TwitterApp.getRestClient();
         getUser();
     }
@@ -95,27 +85,30 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_tweets, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // perform query here
+                searchView.clearFocus();
+                Intent i = new Intent(getApplicationContext(), SearchActivity.class);
+                i.putExtra("q", query);
+                startActivity(i);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // Store instance of the menu item containing progress
-        miActionProgressItem = menu.findItem(R.id.miActionProgress);
-        // Extract the action-view from the menu item
-        ProgressBar v =  (ProgressBar) MenuItemCompat.getActionView(miActionProgressItem);
-        // Return to finish
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    public void showProgressBar() {
-        // Show progress item
-        miActionProgressItem.setVisible(true);
-    }
-
-    public void hideProgressBar() {
-        // Hide progress item
-        miActionProgressItem.setVisible(false);
     }
 
     @Override
@@ -163,6 +156,13 @@ public class TimelineActivity extends AppCompatActivity implements NewTweetFragm
 
     @Override
     public void returnData(Tweet tweet) {
+        homeTimeLineFragment = (HomeTimeLineFragment) tweetsPagerAdapter.getRegisteredFragment(0);
+        homeTimeLineFragment.insertTweetAtTop(tweet);
+        vpPager.setCurrentItem(0);
+    }
+
+    @Override
+    public void returnReplyTweet(Tweet tweet) {
         homeTimeLineFragment = (HomeTimeLineFragment) tweetsPagerAdapter.getRegisteredFragment(0);
         homeTimeLineFragment.insertTweetAtTop(tweet);
         vpPager.setCurrentItem(0);

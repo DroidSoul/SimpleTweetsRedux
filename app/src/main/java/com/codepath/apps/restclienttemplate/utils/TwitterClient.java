@@ -11,6 +11,8 @@ import com.github.scribejava.core.builder.api.BaseApi;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import static com.codepath.apps.restclienttemplate.models.User_Table.screenName;
+
 /*
  * 
  * This is the object responsible for communicating with a REST API. 
@@ -88,6 +90,7 @@ public class TwitterClient extends OAuthBaseClient {
 		}
 		client.get(apiUrl, params, handler);
 	}
+
 	public void getUserTimeline(String screenName, long maxID, AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/user_timeline.json");
 		// Can specify query string params directly or through RequestParams.
@@ -101,6 +104,22 @@ public class TwitterClient extends OAuthBaseClient {
 			params.put("max_id", maxID);
 		}
 		client.get(apiUrl, params, handler);
+	}
+
+	public void getSearchResults(long maxID, String query, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("search/tweets.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("count", 25);
+		params.put("q", query);
+		params.put("result_type", "popular");
+		if (maxID == -1) {
+			params.put("since_id", 1);
+		}
+		else {
+			params.put("max_id", maxID);
+		}
+		getClient().get(apiUrl, params, handler);
 	}
 
 	public void favorTweet(AsyncHttpResponseHandler repsonseHandler, Boolean favourite, long id) {
